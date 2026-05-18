@@ -1133,6 +1133,30 @@ body.dark-mode .theme-toggle:hover { background-color: rgba(255,255,255,0.1); }
     .hero-container { 
         padding-top: 120px !important; 
     }
+    /* ... your existing mobile fixes for the landing page ... */
+
+    /* 1. Hide the desktop navigation text links on mobile */
+    /* NOTE: Replace '.nav-links' with the actual class name of the div/ul holding those links in your navbar.ejs or home.ejs */
+    .nav-links, 
+    .desktop-menu {
+        display: none !important;
+    }
+
+    /* 2. Stack the 3 colored dashboard buttons vertically for a cleaner look */
+    /* NOTE: Replace '.action-buttons-container' with the class wrapping those 3 buttons */
+    .action-buttons-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+
+    /* Make each button take up the full width of the screen */
+    .action-buttons-container .btn,
+    .action-buttons-container > div,
+    .action-buttons-container a {
+        width: 100% !important;
+        margin: 0 !important;
+    }
 
     /* Shrinks the massive heading to fit a phone screen */
     h1 {

@@ -73,5 +73,126 @@
             localStorage.setItem('theme', 'light');
             btn.innerHTML = '<i class="material-icons-outlined">dark_mode</i>';
         }
+        
+    }
+
+
+</script>
+<div class="mobile-fab-menu" onclick="toggleMobileMenu()">
+    <i class="material-icons">menu</i>
+</div>
+
+<div class="mobile-menu-overlay" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <h3 style="margin: 0; color: #1976D2;">Navigation</h3>
+        <i class="material-icons" onclick="toggleMobileMenu()" style="cursor:pointer; font-size: 28px; color: #666;">close</i>
+    </div>
+    <div class="mobile-menu-links">
+        <a href="/home"><i class="material-icons">dashboard</i> Dashboard</a>
+        <a href="/booking"><i class="material-icons">event</i> Book Session</a>
+        <a href="/university"><i class="material-icons">search</i> Uni Finder</a>
+        <a href="/test-modules"><i class="material-icons">quiz</i> Test Modules</a>
+        <a href="/chat"><i class="material-icons">smart_toy</i> AI Assistant</a>
+        <a href="/profile"><i class="material-icons">person</i> Profile</a>
+        
+        <a href="/logout" style="color: #d32f2f; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+            <i class="material-icons" style="color: #d32f2f;">logout</i> Logout
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Hide the button on desktop laptops */
+    .mobile-fab-menu {
+        display: none;
+    }
+
+    /* Show and style the button on phones */
+    @media (max-width: 768px) {
+        .mobile-fab-menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1976D2, #5A7B95);
+            color: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 9999;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .mobile-fab-menu:active {
+            transform: scale(0.95);
+        }
+    }
+
+    /* The hidden slide-out panel */
+    .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        right: -320px; /* Hidden off-screen to the right */
+        width: 280px;
+        height: 100vh;
+        background: white;
+        box-shadow: -5px 0 25px rgba(0,0,0,0.2);
+        z-index: 10000;
+        transition: right 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* The class added by JavaScript to slide it in */
+    .mobile-menu-overlay.active {
+        right: 0;
+    }
+
+    .mobile-menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .mobile-menu-links {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .mobile-menu-links a {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 16px 10px;
+        text-decoration: none;
+        color: #444;
+        font-size: 16px;
+        font-weight: 500;
+        border-bottom: 1px solid #f5f5f5;
+        transition: background 0.2s;
+    }
+
+    .mobile-menu-links a:hover {
+        background: #f0f7ff;
+        color: #1976D2;
+        border-radius: 8px;
+    }
+
+    .mobile-menu-links .material-icons {
+        color: #5A7B95;
+    }
+</style>
+
+<script>
+    function toggleMobileMenu() {
+        document.getElementById('mobileMenu').classList.toggle('active');
     }
 </script>
