@@ -6,7 +6,7 @@ const app = express();
 const port = 3001; // The local port for your frontend
 
 // ✅ Local Backend URL Connection
-const API_BASE = 'http://0.0.0.0:8000';
+const API_BASE = 'https://theadmissionarchitect.onrender.com';
 const sessions = {};
 
 async function apiPost(path, body) {
