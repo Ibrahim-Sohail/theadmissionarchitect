@@ -61,7 +61,35 @@ const transporter = nodemailer.createTransport({
 app.get('/', (req, res) => res.render('landing', { page: 'landing' }));
 app.get('/login', (req, res) => { if (req.currentUser) return res.redirect('/home'); res.render('login', { page: 'login', error: null, mode: 'login' }); });
 app.get('/signup', (req, res) => { if (req.currentUser) return res.redirect('/home'); res.render('login', { page: 'login', error: null, mode: 'signup' }); });
+// Catch the email verification link
+app.get('/verify', async (req, res) => {
+    const token = req.query.token;
 
+    if (!token) {
+        return res.send("<h2 style='text-align:center; margin-top:50px; font-family:sans-serif;'>Invalid verification link.</h2>");
+    }
+
+    try {
+        // Send the token to your live Python backend
+        // Make sure to replace this URL with your actual Render API URL
+        const backendUrl = `https://theadmissionarchitect.onrender.com/api/auth/verify/${token}`;
+        
+        const response = await fetch(backendUrl);
+        const data = await response.json();
+
+        if (data.success) {
+            // If the backend says success, redirect them to the login page
+            // We add ?verified=true so you can optionally show a success message on the login screen
+            res.redirect('/login?verified=true');
+        } else {
+            // The backend rejected it (expired or invalid)
+            res.send(`<h2 style='text-align:center; margin-top:50px; font-family:sans-serif;'>Verification failed: ${data.detail || "Link expired."}</h2>`);
+        }
+    } catch (error) {
+        console.error("Verification Error:", error);
+        res.send("<h2 style='text-align:center; margin-top:50px; font-family:sans-serif;'>Error connecting to verification server. Please try again later.</h2>");
+    }
+});
 app.post('/signup', async (req, res) => {
     const { username, email, password, confirm_password } = req.body;
     if (!username || username.trim().length < 3) return res.render('login', { page: 'login', mode: 'signup', error: 'Username must be at least 3 characters.' });
