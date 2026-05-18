@@ -1127,3 +1127,23 @@ body.dark-mode .theme-toggle:hover { background-color: rgba(255,255,255,0.1); }
     .footer-grid { grid-template-columns: 1fr; }
     .footer-bottom { flex-direction: column; text-align: center; }
 }
+/* --- MOBILE RESPONSIVENESS FIXES --- */
+@media (max-width: 768px) {
+    /* Pushes the main text down so it clears your logo and Enquire button */
+    .hero-container { 
+        padding-top: 120px !important; 
+    }
+
+    /* Shrinks the massive heading to fit a phone screen */
+    h1 {
+        font-size: 2.8rem !important; 
+        line-height: 1.1 !important;
+        margin-top: 20px;
+    }
+    
+    /* Slightly shrinks the paragraph text below it for better reading */
+    .hero-container p {
+        font-size: 1.1rem !important;
+        padding: 0 15px; /* Adds a little breathing room on the left/right edges */
+    }
+}
