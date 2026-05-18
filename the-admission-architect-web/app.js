@@ -69,7 +69,9 @@ app.post('/signup', async (req, res) => {
 
     try {
         const data = await apiPost('/api/auth/signup', { username: username.trim(), email, password });
-        const verifyLink = `http://localhost:3001/verify/${data.verification_token}`;
+        // This checks if Vercel provided a BASE_URL. If not, it defaults to localhost for testing.
+        const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+        const verifyLink = `${baseUrl}/verify?token=${data.verification_token}`;
         await transporter.sendMail({
             from: `"The Admission Architect" <${process.env.GMAIL_USER}>`,
             to: data.email,
