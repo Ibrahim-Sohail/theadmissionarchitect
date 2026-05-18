@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Finder</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Specific Styles for the University Finder Form */
+        .finder-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group label::after {
+            content: " *";
+            color: #d32f2f;
+        }
+
+        .form-select {
+            padding: 12px;
+            border: 1px solid #ccc; 
+            border-radius: 8px;
+            background-color: white;
+            font-size: 14px;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .form-select:focus { border-color: #5A7B95; }
+        .form-select.error { border-color: #d32f2f; }
+
+        .search-btn {
+            background: linear-gradient(135deg, #1976D2, #5A7B95);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.4);
+            background: linear-gradient(135deg, #1565C0, #476278);
+        }
+
+        .search-btn:active { transform: scale(0.98); }
+
+        #toast {
+            visibility: hidden;
+            min-width: 250px; 
+            margin-left: -125px; 
+            background-color: #333; 
+            color: #fff; 
+            text-align: center; 
+            border-radius: 50px; 
+            padding: 16px; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 50%;
+            bottom: 30px; 
+            font-size: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.5s, bottom 0.5s;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px; 
+        }
+
+        @media (max-width: 600px) {
+            .finder-form { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 style="color: #5A7B95; margin-bottom: 5px;">AI University Recommender</h2>
+        <p style="color: #666; margin-bottom: 30px;">Enter your academic profile, and our AI will match you with the best universities.</p>
+
+        <div class="card">
+            <div class="finder-form">
+                
+                <div class="form-group">
+                    <label>Preferred Country</label>
+                    <select id="country" class="form-select">
+                        <option value="UK">United Kingdom</option>
+                        <option value="USA">United States</option>
+                        <option value="Canada">Canada</option>
+                        <option value="Germany">Germany</option>
+                        <option value="Any">Any Location</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Intended Major</label>
+                    <input type="text" id="major" class="form-select" placeholder="e.g. Computer Science" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Current CGPA (Out of 4.0)</label>
+                    <input type="number" step="0.01" min="0" max="4.0" id="cgpa" class="form-select" placeholder="e.g. 3.5" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Minimum Annual Budget ($)</label>
+                    <input type="number" id="budget_min" class="form-select" placeholder="e.g. 10000" value="10000" required>
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Maximum Annual Budget ($)</label>
+                    <input type="number" id="budget_max" class="form-select" placeholder="e.g. 30000" value="30000" required>
+                </div>
+
+            </div>
+
+            <button onclick="searchUni()" class="search-btn" id="searchBtn">
+                <i class="material-icons">manage_search</i> Find My Match
+            </button>
+        </div>
+
+        <div id="results" style="margin-top: 30px;"></div>
+    </div>
+
+    <div id="toast">Added to Favorites</div>
+
+    <%- include('partials/navbar') %>
+
+    <script>
+        async function searchUni() {
+            // Get values from the form
+            const country = document.getElementById('country').value;
+            const major = document.getElementById('major').value;
+            const cgpa = document.getElementById('cgpa').value;
+            const budget_min = document.getElementById('budget_min').value;
+            const budget_max = document.getElementById('budget_max').value;
+            
+            const resultsDiv = document.getElementById('results');
+            const btn = document.getElementById('searchBtn');
+            
+            // Basic Validation
+            if(!major || !cgpa || !budget_min || !budget_max) {
+                showToast("Please fill in all your profile details.");
+                return;
+            }
+
+            // Change button state to loading
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="material-icons" style="animation: spin 1s linear infinite;">sync</i> Analyzing Profile...';
+            btn.disabled = true;
+            resultsDiv.innerHTML = '';
+            
+            try {
+                // Trigger the real backend API
+                const response = await fetch('/api/universities/recommend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cgpa: parseFloat(cgpa),
+                        major_interest: major,
+                        budget_min: parseFloat(budget_min),
+                        budget_max: parseFloat(budget_max),
+                        preferred_country: country
+                    })
+                });
+
+                const data = await response.json();
+
+                if(data.error) throw new Error(data.error);
+
+                let html = "";
+                
+                // Extract the split payload
+                const dbMatches = data.database_matches || [];
+                const aiMatches = data.ai_matches || [];
+
+                // 1. Check if both are empty
+                if (dbMatches.length === 0 && aiMatches.length === 0) {
+                    html = "<p style='text-align:center; color:#666; background: white; padding: 20px; border-radius: 12px;'>No universities found matching your exact criteria. Try adjusting your budget or selecting 'Any Location'!</p>";
+                } else {
+                    
+                    // 2. Render Database Matches (Partner Universities)
+                    if (dbMatches.length > 0) {
+                        html += "<h3 style='color: #333; margin-bottom: 15px;'>Partner Universities</h3>";
+                        dbMatches.forEach(uni => {
+                            const tuitionStr = uni.tuition ? `$${uni.tuition.toLocaleString()}/yr` : 'N/A';
+                            
+                            html += `
+                            <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-left: 4px solid #5A7B95;">
+                                <div>
+                                    <h4 style="margin:0; color:#5A7B95; font-size: 18px;">${uni.name}</h4>
+                                    <p style="margin:5px 0; color:#666; font-size:14px;">${uni.location} | Avg Tuition: ${tuitionStr}</p>
+                                    <span style="display:inline-block; background:#FFF3E0; color:#E65100; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:bold; margin-top:5px;">
+                                        Global Rank: #${uni.ranking || 'N/A'}
+                                    </span>
+                                </div>
+                                <button onclick="toggleFav('${uni.name}')" style="background:none; border:none; cursor:pointer; font-size:24px; transition: transform 0.2s; padding-left: 10px;">
+                                    ❤️
+                                </button>
+                            </div>`;
+                        });
+                    }
+
+                    // 3. Render AI Matches (Global Recommendations)
+                    if (aiMatches.length > 0) {
+                        html += "<h3 style='color: #333; margin-bottom: 15px; margin-top: 30px;'>Global AI Recommendations</h3>";
+                        aiMatches.forEach(uni => {
+                            html += `
+                            <div class="card" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 15px; border-left: 4px solid #1976D2;">
+                                <div>
+                                    <h4 style="margin:0; color:#1976D2; font-size: 18px;">
+                                        ${uni.name} 
+                                        <span style="font-size: 11px; background: #E3F2FD; color: #1565C0; padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; font-weight: bold;">AI Match ✨</span>
+                                    </h4>
+                                    <p style="margin:5px 0; color:#666; font-size:14px;">${uni.location} | Est. Tuition: ${uni.tuition}</p>
+                                    <p style="margin:8px 0 0 0; color:#444; font-size:13px; font-style: italic; line-height: 1.4;">
+                                        <strong>Why it fits:</strong> ${uni.reason}
+                                    </p>
+                                </div>
+                                <button onclick="toggleFav('${uni.name}')" style="background:none; border:none; cursor:pointer; font-size:24px; transition: transform 0.2s; padding-left: 10px;">
+                                    ❤️
+                                </button>
+                            </div>`;
+                        });
+                    }
+                }
+                
+                resultsDiv.innerHTML = html;
+
+            } catch (err) {
+                resultsDiv.innerHTML = `<p style='text-align:center; color:red; background: white; padding: 20px; border-radius: 12px;'>Error connecting to Recommender Engine: ${err.message}</p>`;
+            } finally {
+                // Reset button text
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        
+        function toggleFav(name) {
+            showToast(`${name} added to favorites!`);
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+    </script>
+    
+    <style>
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</body>
+</html>

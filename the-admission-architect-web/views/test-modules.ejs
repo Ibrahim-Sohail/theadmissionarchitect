@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modules | The Admission Architect</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { background-color: #F9FAFB; }
+        .modules-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        
+        /* Two-Column Grid for the Main Hubs */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* Card Styles */
+        .test-card { 
+            background: white; 
+            border-radius: 16px; 
+            padding: 30px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Colored Borders */
+        #ieltsCard { border: 2px solid #8E24AA; }
+        #greCard { border: 2px solid #00BFA5; }
+
+        .card-header { display: flex; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .header-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin-right: 20px; }
+        .header-icon i { font-size: 32px; }
+        .header-title { flex: 1; }
+        
+        /* Button Grid */
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .module-btn { padding: 15px; border-radius: 10px; color: white; text-align: center; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s; font-size: 14px; }
+        .module-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        /* Tutor Card */
+        .tutor-card { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 25px 20px 20px; margin-top: auto; display: flex; align-items: center; gap: 20px; position: relative; }
+        .tutor-badge { position: absolute; top: -14px; left: 20px; background: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; color: #F57C00; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 5px; }
+        .tutor-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
+        .tutor-info { flex: 1; }
+        .tutor-info h4 { margin: 0 0 5px 0; color: #333; font-size: 18px; }
+        .tutor-info p { margin: 0; color: #666; font-size: 13px; }
+        .tutor-price { font-weight: bold; color: #2E7D32; margin-top: 5px; font-size: 15px; }
+
+        /* General Format Info Box */
+        .format-box { padding: 15px; border-radius: 0 8px 8px 0; margin-bottom: 20px; font-size: 13px; color: #444; line-height: 1.5; }
+        .format-box ul { margin: 8px 0 0 0; padding-left: 20px; }
+        .format-box li { margin-bottom: 5px; }
+        
+        /* Specific Colors for Format Boxes */
+        .ielts-format { background: #F3E5F5; border-left: 4px solid #8E24AA; }
+        .gre-format { background: #E0F2F1; border-left: 4px solid #00897B; }
+        
+        @media (max-width: 900px) {
+            .modules-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .btn-grid { grid-template-columns: 1fr; }
+            .tutor-card { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('partials/navbar') %>
+
+    <div class="modules-container">
+        <h1 style="color: #333; margin-bottom: 10px;">Test Preparation Modules</h1>
+        <p style="color: #666; margin-bottom: 20px;">Practice with our interactive modules. Get instant scores and AI grading.</p>
+
+        <div class="modules-grid">
+            
+            <div class="test-card" id="ieltsCard">
+                <div class="card-header">
+                    <div class="header-icon" style="background-color: #8E24AA;"><i class="material-icons">language</i></div>
+                    <div class="header-title">
+                        <h3 style="margin: 0; color: #333; font-size: 22px;">IELTS Hub</h3>
+                        <p style="margin: 0; color: #666; font-size: 14px;">Click to access Mock Tests & Tutors</p>
+                    </div>
+                </div>
+
+                <p style="color: #555; font-size: 14px; margin-bottom: 15px;">
+                    Practice with our interactive modules. Get instant scores for Reading and Listening, and AI grading for Speaking and Writing.
+                </p>
+
+                <div class="format-box ielts-format">
+                    <strong>Format Overview:</strong>
+                    <ul>
+                        <li><strong>Listening (30 mins):</strong> 4 sections, 40 questions covering social and academic contexts.</li>
+                        <li><strong>Reading (60 mins):</strong> 3 reading passages with 40 questions.</li>
+                        <li><strong>Writing (60 mins):</strong> Task 1 (Graph/Chart or Letter) and Task 2 (Essay).</li>
+                        <li><strong>Speaking (11-14 mins):</strong> 3-part interactive face-to-face interview.</li>
+                    </ul>
+                </div>
+                
+                <div class="btn-grid" style="margin-bottom: 30px;">
+                    <a href="/module/listening" class="module-btn" style="background-color: #4CAF50;"><i class="material-icons">headphones</i> Listening Mock</a>
+                    <a href="/module/reading" class="module-btn" style="background-color: #FF9800;"><i class="material-icons">menu_book</i> Reading Mock</a>
+                    <a href="/module/writing" class="module-btn" style="background-color: #F44336;"><i class="material-icons">edit_document</i> Writing Mock</a>
+                    <a href="/voice" class="module-btn" style="background-color: #9C27B0;"><i class="material-icons">mic</i> Speaking AI Bot</a>
+                </div>
+
+                <div class="tutor-card">
+                    <div class="tutor-badge"><i class="material-icons" style="font-size: 14px;">star</i> Hire a Personal Tutor</div>
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Dr. Emily Chen" class="tutor-img">
+                    <div class="tutor-info">
+                        <h4>Dr. Emily Chen</h4>
+                        <p>Ex-IELTS Examiner • 10+ Years Exp.</p>
+                        <div class="tutor-price">£40 / hour</div>
+                    </div>
+                    <a href="/booking" class="calc-btn-primary" style="width: auto; padding: 10px 20px; background: #333; border: none; cursor: pointer; border-radius: 8px; text-decoration: none; display: inline-block;">Book Tutor</a>
+                </div>
+            </div>
+
+            <div class="test-card" id="greCard">
+                <div class="card-header">
+                    <div class="header-icon" style="background-color: #00BFA5;"><i class="material-icons">school</i></div>
+                    <div class="header-title">
+                        <h3 style="margin: 0; color: #333; font-size: 22px;">GRE Hub</h3>
+                        <p style="margin: 0; color: #666; font-size: 14px;">Click to access Prep & Tutors</p>
+                    </div>
+                </div>
+
+                <p style="color: #555; font-size: 14px; margin-bottom: 15px;">
+                    The GRE assesses your verbal reasoning, quantitative reasoning, and analytical writing skills. Use our AI tools or hire a tutor to boost your score.
+                </p>
+
+                <div class="format-box gre-format">
+                    <strong>Format Overview:</strong>
+                    <ul>
+                        <li><strong>Analytical Writing:</strong> 1 essay (Analyze an Issue). 30 minutes.</li>
+                        <li><strong>Verbal Reasoning:</strong> ~27 MCQs covering Reading Comprehension, Text Completion, etc.</li>
+                        <li><strong>Quantitative Reasoning:</strong> ~27 questions covering Quantitative Comparison and Numeric Entry.</li>
+                    </ul>
+                </div>
+
+                <div class="btn-grid" style="grid-template-columns: 1fr; margin-bottom: 30px;">
+                    <a href="/module/gre-verbal" class="module-btn" style="background-color: #00897B;">
+                        <i class="material-icons">edit_document</i> Analytical Writing
+                    </a>
+                    <a href="/chat" class="module-btn" style="background-color: #0288D1;">
+                        <i class="material-icons">forum</i> Verbal & Quant AI
+                    </a>
+                </div>
+
+                <div class="tutor-card">
+                    <div class="tutor-badge"><i class="material-icons" style="font-size: 14px;">star</i> Hire a Personal Tutor</div>
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Alex Mercer" class="tutor-img">
+                    <div class="tutor-info">
+                        <h4>Alex Mercer</h4>
+                        <p>GRE Perfect Scorer • 5+ Years Exp.</p>
+                        <div class="tutor-price">£50 / hour</div>
+                    </div>
+                    <a href="/booking" class="calc-btn-primary" style="width: auto; padding: 10px 20px; background: #333; border: none; cursor: pointer; border-radius: 8px; text-decoration: none; display: inline-block;">Book Tutor</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

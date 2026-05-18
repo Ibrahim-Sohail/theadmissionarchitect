@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Specific Styles to make document rows look cleaner like inputs */
+        .doc-section-title {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 25px 0 15px 0;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .doc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            transition: border-color 0.2s;
+        }
+
+        .doc-item:hover {
+            border-color: #5A7B95;
+        }
+
+        .doc-name {
+            font-size: 14px;
+            color: #444;
+            font-weight: 500;
+        }
+
+        .doc-action-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* The mock file input look */
+        .mock-file-input {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #888;
+            width: 150px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="profile-header-card">
+            <div class="profile-avatar-container">
+                <img src="<%= user.photo %>" class="profile-avatar" id="avatarPreview" onerror="this.src='https://via.placeholder.com/150'">
+                <button type="button" class="edit-avatar-btn" onclick="editPhoto()">
+                    <i class="material-icons" style="font-size: 18px;">edit</i>
+                </button>
+            </div>
+            
+            <form action="/update-profile" method="POST" id="profileForm">
+                <input type="hidden" name="photoUrl" id="photoInput" value="<%= user.photo %>">
+                
+                <div class="profile-form-grid">
+                    <div>
+                        <label style="font-size:12px; color:#666; font-weight:bold;">Full Name</label>
+                        <input type="text" name="name" value="<%= user.name %>" class="input-field" style="margin-top:5px;">
+                    </div>
+                    <div>
+                        <label style="font-size:12px; color:#666; font-weight:bold;">Phone Number</label>
+                        <input type="text" name="phone" value="<%= user.phone %>" class="input-field" style="margin-top:5px;">
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <label style="font-size:12px; color:#666; font-weight:bold;">Email Address</label>
+                        <input type="email" name="email" value="<%= user.email %>" class="input-field" style="margin-top:5px;">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn" style="width: auto; margin-top: 20px; padding: 10px 30px; background-color: #5A7B95;">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+
+        <div class="profile-tabs">
+            <button class="tab-btn active" onclick="openTab('docs')">Documents</button>
+            <button class="tab-btn" onclick="openTab('bookings')">My Bookings</button>
+            <button class="tab-btn" onclick="openTab('favorites')">Favorites</button>
+        </div>
+
+        <div id="docs" class="tab-content active">
+            <div class="card" style="border: none; box-shadow: none; padding: 0;">
+                <h3 style="margin-top:0; color: #333; font-size: 20px;">Document Center</h3>
+                <p style="color:#666; font-size:14px;">Upload your required documents below. You can update or replace them at any time.</p>
+
+                <div class="doc-section-title" style="background:#E3F2FD; color:#1976D2;">
+                    <i class="material-icons">badge</i> 
+                    Identification Document
+                </div>
+                <% 
+                    const idDocs = [
+                        "Passport", 
+                        "National ID", 
+                        "National Address", 
+                        "Academic Documents",
+                        "Predicted Grades",
+                        "College Docs",
+                        "IELTS",
+                        "GRE (If available)",
+                        "Academic Recommendation Letters (1 or 2)"
+                    ]; 
+                %>
+                <% idDocs.forEach(function(doc) { %>
+                    <div class="doc-item">
+                        <div class="doc-name"><i class="material-icons" style="font-size:16px; color:#1976D2; vertical-align:middle; margin-right:8px;">description</i> <%= doc %></div>
+                        
+                        <div class="doc-action-area">
+                            <% if (docs[doc]) { %>
+                                <div class="mock-file-input" style="color:#2e7d32; border-color:#c8e6c9; background:#e8f5e9;">
+                                    <i class="material-icons" style="font-size:14px; vertical-align:middle;">check_circle</i> file_uploaded.pdf
+                                </div>
+                            <% } else { %>
+                                <div class="mock-file-input">
+                                    No file chosen...
+                                </div>
+                            <% } %>
+                            
+                            <form action="/upload-doc" method="POST" style="margin:0;">
+                                <input type="hidden" name="docName" value="<%= doc %>">
+                                <button type="submit" class="btn-small btn-outline" style="min-width: 80px;">
+                                    <% if (docs[doc]) { %> Update <% } else { %> Upload <% } %>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+
+                <div class="doc-section-title" style="background:#F3E5F5; color:#8E44AD;">
+                    <i class="material-icons">work</i> 
+                    Professional Documents
+                </div>
+                <% 
+                    const profDocs = [
+                        "CV", 
+                        "Experience Letters", 
+                        "Professional Recommendation Letters"
+                    ]; 
+                %>
+                <% profDocs.forEach(function(doc) { %>
+                    <div class="doc-item">
+                        <div class="doc-name"><i class="material-icons" style="font-size:16px; color:#8E44AD; vertical-align:middle; margin-right:8px;">assignment_ind</i> <%= doc %></div>
+                        
+                        <div class="doc-action-area">
+                            <% if (docs[doc]) { %>
+                                <div class="mock-file-input" style="color:#2e7d32; border-color:#c8e6c9; background:#e8f5e9;">
+                                    <i class="material-icons" style="font-size:14px; vertical-align:middle;">check_circle</i> file_uploaded.pdf
+                                </div>
+                            <% } else { %>
+                                <div class="mock-file-input">
+                                    No file chosen...
+                                </div>
+                            <% } %>
+                            
+                            <form action="/upload-doc" method="POST" style="margin:0;">
+                                <input type="hidden" name="docName" value="<%= doc %>">
+                                <button type="submit" class="btn-small btn-outline" style="min-width: 80px;">
+                                    <% if (docs[doc]) { %> Update <% } else { %> Upload <% } %>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+
+                <div class="doc-section-title" style="background:#FFF3E0; color:#E65100;">
+                    <i class="material-icons">fact_check</i> 
+                    Visa Document
+                </div>
+                <% 
+                    const visaDocs = [
+                        "Bank Statement", 
+                        "Affidavit", 
+                        "CAS / Visa Letter",
+                        "Birth Certificate"
+                    ]; 
+                %>
+                <% visaDocs.forEach(function(doc) { %>
+                    <div class="doc-item">
+                        <div class="doc-name"><i class="material-icons" style="font-size:16px; color:#E65100; vertical-align:middle; margin-right:8px;">account_balance</i> <%= doc %></div>
+                        
+                        <div class="doc-action-area">
+                            <% if (docs[doc]) { %>
+                                <div class="mock-file-input" style="color:#2e7d32; border-color:#c8e6c9; background:#e8f5e9;">
+                                    <i class="material-icons" style="font-size:14px; vertical-align:middle;">check_circle</i> file_uploaded.pdf
+                                </div>
+                            <% } else { %>
+                                <div class="mock-file-input">
+                                    No file chosen...
+                                </div>
+                            <% } %>
+                            
+                            <form action="/upload-doc" method="POST" style="margin:0;">
+                                <input type="hidden" name="docName" value="<%= doc %>">
+                                <button type="submit" class="btn-small btn-outline" style="min-width: 80px;">
+                                    <% if (docs[doc]) { %> Update <% } else { %> Upload <% } %>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <div id="bookings" class="tab-content">
+            <% if (bookings.length === 0) { %>
+                <div class="card" style="text-align:center; padding:40px;">
+                    <i class="material-icons" style="font-size:48px; color:#ccc;">event_busy</i>
+                    <p>No active bookings found.</p>
+                    <a href="/booking" class="btn" style="width:auto; display:inline-block;">Book a Session</a>
+                </div>
+            <% } else { %>
+                <% bookings.forEach(function(booking) { %>
+                    <div class="action-card">
+                        <div>
+                            <h4 style="margin:0; color:#333;"><%= booking.type %></h4>
+                            <p style="margin:5px 0 0; color:#666;">
+                                <i class="material-icons" style="font-size:14px; vertical-align:middle;">calendar_today</i> 
+                                <%= booking.date %> at <%= booking.time %>
+                            </p>
+                        </div>
+                        <div style="display:flex;">
+                            <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2jR4-nhq5qQiw75LIJClmQrP8M5mIvdagD1tZSAGZkxOKsrKnROvIx9BZY9IVJVQzetYvJUtJv" 
+                               target="_blank" class="btn-small btn-primary">
+                               Reschedule
+                            </a>
+                            <form action="/cancel-booking" method="POST" style="margin:0;">
+                                <input type="hidden" name="id" value="<%= booking.id %>">
+                                <button type="submit" class="btn-small btn-danger">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+                <p style="text-align:center; color:#999; font-size:12px; margin-top:20px;">
+                    Note: External bookings may take time to appear here.
+                </p>
+            <% } %>
+        </div>
+
+        <div id="favorites" class="tab-content">
+            <% if (favorites.length === 0) { %>
+                <div class="card" style="text-align:center; padding:40px;">
+                    <i class="material-icons" style="font-size:48px; color:#ccc;">favorite_border</i>
+                    <p>No favorites saved yet.</p>
+                    <a href="/university" class="btn" style="width:auto; display:inline-block;">Find Universities</a>
+                </div>
+            <% } else { %>
+                <% favorites.forEach(function(fav) { %>
+                    <div class="action-card" style="border-left-color: #FF6E40;">
+                        <div>
+                            <h4 style="margin:0; color:#333;"><%= fav.name %></h4>
+                            <p style="margin:5px 0 0; color:#666;">
+                                <i class="material-icons" style="font-size:14px; vertical-align:middle;">location_on</i> 
+                                <%= fav.location %>
+                            </p>
+                        </div>
+                        <form action="/remove-favorite" method="POST" style="margin:0;">
+                            <input type="hidden" name="id" value="<%= fav.id %>">
+                            <button type="submit" class="btn-small btn-danger">
+                                <i class="material-icons" style="font-size:14px; vertical-align:middle;">delete</i> Remove
+                            </button>
+                        </form>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+    </div>
+
+    <%- include('partials/navbar') %>
+
+    <script>
+        function openTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(div => div.classList.remove('active'));
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function editPhoto() {
+            const url = prompt("Enter Image URL for profile photo:", document.getElementById('avatarPreview').src);
+            if(url) {
+                document.getElementById('avatarPreview').src = url;
+                document.getElementById('photoInput').value = url;
+            }
+        }
+    </script>
+
+</body>
+</html>
