@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const app = express();
+const path = require('path');
 const port = 3001; // The local port for your frontend
 
 // ✅ Local Backend URL Connection
@@ -30,8 +31,12 @@ async function apiGet(path) {
     return data;
 }
 
+// Set up EJS and absolute path for views
 app.set('view engine', 'ejs');
-app.use(express.static('public'));
+app.set('views', path.join(__dirname, 'views')); 
+
+// Set up absolute path for public files (CSS, Images)
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
